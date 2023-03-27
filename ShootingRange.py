@@ -12,7 +12,7 @@ import random
 
     Al final del juego, el puntaje de ambos equipos se imprime usando la biblioteca "colorama" 
 """
-def start_game(teamOne, teamTwo):
+def initGame(teamOne, teamTwo):
     init()
     table = PrettyTable()
     table.field_names = [Fore.RED+"Team", Fore.GREEN+"Score"]
@@ -135,4 +135,4 @@ def extraShotDraw(team):
 teamOneInit = Team("Team 1")
 teamTwoInit = Team("Team 2")
 
-start_game(teamOneInit, teamTwoInit)
+initGame(teamOneInit, teamTwoInit)
