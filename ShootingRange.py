@@ -2,6 +2,7 @@ from colorama import init, Fore, Back, Style
 from prettytable import PrettyTable
 from TeampArchers import Team
 import random
+import matplotlib.pyplot as plt
 
 """
     "teamOne" y "teamTwo", que son instancias de la clase "Team". Este método inicia la biblioteca "colorama"
@@ -16,13 +17,16 @@ def initGame(teamOne, teamTwo):
     init()
     table = PrettyTable()
     table.field_names = [Fore.RED+"Team", Fore.GREEN+"Score"]
-    games = 55
+    games = 1000
     while games > 0:
         resetEndurance(teamOne, teamTwo)
         initRounds(teamOne, teamTwo)
         games -= 1
     table.add_row([teamOne.name, teamOne.teamScore])
     table.add_row([teamTwo.name, teamTwo.teamScore])
+    showTableGenderScore(teamOne, 'Equipo 1')
+    showTableGenderScore(teamTwo, 'Equipo 2')
+    showWinTeam(teamOne, teamTwo)
     print(table)
 
 """
@@ -96,8 +100,10 @@ def initRounds(teamOne, teamTwo):
     while cycle > 0:
         for archer in teamOne:
             shootingPlayers(archer, teamOne)
+            print("==========Team One==========")
         for archer in teamTwo:
             shootingPlayers(archer, teamTwo)
+            print("==========Team Two==========")
         extraShotDraw(teamOne), extraShotDraw(teamTwo)
         cycle -= 1
 
@@ -131,6 +137,61 @@ def extraShotDraw(team):
             maxLuck = archer.luck
             luckiestArcher = archer
     team.updateTeamScore(takeShot(luckiestArcher))
+
+def showTableGenderScore(archers, teamName):
+    score_men = []
+    score_womens = []
+    total_womens = 0
+    total_mens = 0
+
+    for archer in archers:
+        if archer.gender == 1:
+            score_men.append(archer.individual_score)
+            total_mens += 1
+        else:
+            score_womens.append(archer.individual_score)
+            total_womens += 1
+
+        categories = [f"Mujeres ({total_womens})", f"Hombres ({total_mens})"]
+
+        if len(score_womens) > 0:
+            average_womens = sum(score_womens) / len(score_womens)
+        else:
+            average_womens = 0
+
+        if len(score_men) > 0:
+            average_mens = sum(score_men) / len(score_men)
+        else:
+            average_mens = 0 
+
+        heights = [average_womens, average_mens]
+
+    plt.figure(figsize=(8, 6))
+    plt.bar(categories, heights, color=['pink', 'blue'])
+    plt.title(f'Puntuación Promedio por Género {teamName}')
+    plt.xlabel('Género')
+    plt.ylabel('Puntuación Promedio')
+    plt.show()
+
+def showWinTeam(team1, team2):
+    plt.bar([team1.name, team2.name], [team1.teamScore, team2.teamScore], color=['red', 'blue'])
+    plt.title('Puntaje de Equipos')
+    plt.xlabel('Equipos')
+    plt.ylabel('Puntaje')
+
+    womens_team1 = sum(1 for archer in team1 if archer.gender == 0)
+    mens_team1 = sum(1 for archer in team1 if archer.gender == 1)
+    womens_team2 = sum(1 for archer in team2 if archer.gender == 0)
+    mens_team2 = sum(1 for archer in team2 if archer.gender == 1)
+
+    print(f"{team1.name}: Mujeres: {womens_team1}, Hombres: {mens_team1}")
+    print(f"{team2.name}: Mujeres: {womens_team2}, Hombres: {mens_team2}")
+
+    plt.gca().yaxis.set_major_formatter(plt.FormatStrFormatter('%.2f'))
+
+    plt.tight_layout()
+    plt.show()
+    
 
 teamOneInit = Team("Team 1")
 teamTwoInit = Team("Team 2")
